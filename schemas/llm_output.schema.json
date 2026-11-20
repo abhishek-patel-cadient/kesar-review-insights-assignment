@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kesarandco.example/schemas/review_llm_output.schema.json",
+  "title": "Review classification & extraction output",
+  "description": "The structured output your classification LLM step must return for every review. You may ADD fields if useful, but these fields are required and must follow these types.",
+  "type": "object",
+  "required": ["sentiment", "topics", "product", "language", "safety_flag", "spam", "rating_mismatch", "contains_personal_data", "confidence", "summary"],
+  "properties": {
+    "sentiment": {
+      "type": "string",
+      "enum": ["positive", "neutral", "negative"],
+      "description": "The reviewer's sentiment, judged from the text (not from the star rating)."
+    },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["product_quality", "efficacy", "packaging", "delivery", "price", "scent_texture", "customer_service", "side_effect", "question", "other"]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "What the review is about. One or more."
+    },
+    "product": {
+      "type": ["string", "null"],
+      "description": "The Kesar & Co. product the review is about, using its exact name from faq.md section 7. null if the review is not about a Kesar & Co. product."
+    },
+    "language": {
+      "type": "string",
+      "enum": ["en", "hi", "hinglish"],
+      "description": "en = English, hi = Hindi (Devanagari), hinglish = Hindi written in Latin script mixed with English."
+    },
+    "safety_flag": {
+      "type": "boolean",
+      "description": "true if the review reports a reaction or other safety concern with a product."
+    },
+    "spam": {
+      "type": "boolean",
+      "description": "true if the review is an advert, promotion or otherwise not a genuine review."
+    },
+    "rating_mismatch": {
+      "type": "boolean",
+      "description": "true if the star rating clearly contradicts what the text says."
+    },
+    "contains_personal_data": {
+      "type": "boolean",
+      "description": "true if the review contains personal details such as a phone number, email address, home address or order ID."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "How confident the model is in this classification (0 to 1)."
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "One-line summary for the team, in English."
+    }
+  },
+  "additionalProperties": true,
+  "examples": [
+    {
+      "sentiment": "positive",
+      "topics": ["scent_texture"],
+      "product": "Rose Water Toner 200 ml",
+      "language": "en",
+      "safety_flag": false,
+      "spam": false,
+      "rating_mismatch": false,
+      "contains_personal_data": false,
+      "confidence": 0.93,
+      "summary": "Happy with the toner's fragrance and feel."
+    }
+  ]
+}
